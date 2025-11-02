@@ -1,0 +1,50 @@
+###---------eksempla-------------
+
+### Test root endpoint
+
+
+GET http://localhost:7007/api/v1/
+
+### GET all trips
+GET http://localhost:7007/api/v1/trips
+
+### Create new trip
+POST http://localhost:7007/api/v1/trips
+Content-Type: application/json
+
+{
+  "name": "New Lake trip",
+  "startTime": [2025, 11, 6, 12, 36, 31, 664879000],
+  "endTime": [2025, 11, 17, 12, 36, 31, 664879000],
+  "latitude": 57.3974,
+  "longitude": -5.2345,
+  "price": 3099,
+  "category": "lake",
+  "guideId": 1
+
+}
+
+#\#Update trip by ID
+PUT http://localhost:7007/api/v1/trips/5
+Content-Type: application/json
+
+{
+  "id": 5,
+  "name": "New Lake trip",
+  "startTime": [2025, 11, 6, 12, 36, 31, 664879000],
+  "endTime": [2025, 11, 17, 12, 36, 31, 664879000],
+  "latitude": 57.3974,
+  "longitude": -5.2345,
+  "price": 3099,
+  "category": "lake",
+  "guideId": 2
+}
+
+### DElete trip by ID
+DELETE http://localhost:7007/api/v1/trips/5
+
+### PUT chanche guide for trip
+PUT http://localhost:7007/api/v1/trips/1/guides/1
+
+### GET Total price per guide
+GET http://localhost:7007/api/v1/trips/guides/totalprice
