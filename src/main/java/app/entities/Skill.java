@@ -3,6 +3,7 @@ package app.entities;
 import app.dtos.SkillDTO;
 import app.enums.SkillCategory;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.util.HashSet;
@@ -36,6 +37,10 @@ public class Skill {
     private Set<Candidate> candidates = new HashSet<>();
 
     private String slug;
+
+    private Integer popularityScore;
+
+    private Integer averageSalary;
 
     public Skill(String name, SkillCategory category, Set<Candidate> candidates, String description) {
         this.name = name;

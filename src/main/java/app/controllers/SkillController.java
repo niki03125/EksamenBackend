@@ -2,17 +2,12 @@ package app.controllers;
 
 import app.daos.SkillDAO;
 import app.dtos.SkillDTO;
-import app.dtos.fetching.PackingResponseDTO;
 import app.entities.Skill;
 import app.enums.SkillCategory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
 
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 public class SkillController implements IController<Skill, Integer> {
@@ -149,7 +144,7 @@ public class SkillController implements IController<Skill, Integer> {
 //
 //
 //    // henter pakkeliste fra ekstern API ud fra kategori (fx "beach", "lake" osv.)
-//    private PackingResponseDTO fetchPackingForCategory(String category) throws Exception {
+//    private SkillResponseDTO fetchPackingForCategory(String category) throws Exception {
 //        // hvis kategori mangler, giv fejl
 //        if (category == null || category.isEmpty()) {
 //            throw new IllegalArgumentException("catagory is missing");
@@ -167,7 +162,7 @@ public class SkillController implements IController<Skill, Integer> {
 //        // hvis 200 OK → parse JSON til vores DTO
 //        if (response.statusCode() == 200) {
 //            // Læs JSON og konverter til vores DTO
-//            return OM.readValue(response.body(), PackingResponseDTO.class);
+//            return OM.readValue(response.body(), SkillResponseDTO.class);
 //        } else {
 //            // ellers fejl med statuskode
 //            throw new RuntimeException("Packing API failed. statuscode: " + response.statusCode());
