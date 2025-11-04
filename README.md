@@ -1,35 +1,28 @@
-## Trip Planning API
+## Backend exam assignments fall 2025
 
-This is a simple REST API for managing trips and guides.
+This is a simple REST API for managing candidates and skils.
 It is implemented using Javalin and JPA/Hibernate.
-The API includes JWT-based authentication and integrates with an external Packing List API.
-
-It is prepared for deployment following the tutorials here
-.
-
-In case you need to set up a Droplet at Digital Ocean,
-you can use this link for tutorials: Digital Ocean tutorials
+The API includes JWT-based authentication and integrates with an external Skills API.
 
 ### How to run
 
-1. Create a PostgreSQL database in your local instance called tripdb
+1. Create a PostgreSQL database in your local instance called eksamensdb
 
 2. Configure environment variables (for example in a .env file):
-      DB_URL=jdbc:postgresql://localhost:5432/tripdb
+      DB_URL=jdbc:postgresql://localhost:5432/eksamensdb
       DB_USER=<your_db_user>
       DB_PASSWORD=<your_db_password>
       JWT_SECRET=<your_secret>
-      PACKING_BASE_URL=https://packingapi.cphbusinessapps.dk/packinglist
-
+      
 3. Run the main method in the config.Populate class to populate the database with sample data
 
-4. Run the main method in the Main class to start the server on port 7070
+4. Run the main method in the Main class to start the server on port 7007
 
-5. See all routes in your browser at http://localhost:7070/routes
+5. See all routes in your browser at http://localhost:7007/routes
 
-6. Try requesting http://localhost:7070/trips to see the list of trips
+6. Try requesting http://localhost:7007/candidates to see the list of candidates
 
-7. Use the dev.http file to test the available routes (GET, POST, PUT, DELETE)
+7. Use the requests.http file to test the available routes (GET, POST, PUT, DELETE)
 
 ## Docker commands
 
@@ -47,23 +40,35 @@ docker rm <container_id>
 ```
 ## User Story Progress Overview
 
-| User Story | Points (Max) | Implementation & Progress                                                                                      |
-|-------------|--------------|----------------------------------------------------------------------------------------------------------------|
-| **US1: Database Configuration** | 10 | ✅ Implemented HibernateConfig, Trip & Guide entities, Populator with sample data. Fully functional and tested. |
-| **US2: DAOs and DTOs** | 10 | ✅ DAO layer complete using generics and DTO mapping. CRUD works with database.                                 |
-| **US3: REST API Endpoints** | 15 | ✅ All routes implemented (GET, POST, PUT, DELETE, addGuideToTrip). Tested manually via `dev.http`.             |
-| **US4: Filter by Category** | 10 | ✅ Implemented category filtering using Streams and JPA query. Returns trips by category.                       |
-| **US5: Total Trip Value per Guide** | 10 |✅ Calculating the sum of each, and show it in JSON.                                                              |
-| **US6: External Packing API Integration** | 15 | ✅ Working integration with external Packing API. ZonedDateTime handled via `JavaTimeModule`.                   |
-| **US7: REST Testing** | 20 | 🟡 Started – tests for basic CRUD working, but JWT-protected routes still need token handling.                 |
-| **US8: Security (JWT + Roles)** | 10 | 🟡 Login endpoint + JWT roles implemented. Works manually, tests pending.                                      |
+| User Story                               | Implementation & Progress                                                                                           |
+|------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| **US1: As a system administrator**       | ✅ Implemented HibernateConfig, Candidate & Skill entities, Populator with sample data. Fully functional and tested. |
+| **US2: As a developer - CRUD**           | ✅ DAO layer complete using generics and DTO mapping. CRUD works with database.                                      |
+| **US3: As a REST API consomer**          | ✅ All routes implemented (GET, POST, PUT, DELETE, addSkill). Tested manually via `requests.http`.                   |
+| **US4: As a recriuter - category**       | ✅ Implemented category filtering using Streams and JPA query. Returns candidates by category.                       |
+| **US5: As a recriuter - market insights** | 🟡 See popularity and salary for each candidate's skill - Using fetched api data.                                   |
+| **US6: As an analyst**                   | 🟡 Working with external API.                                                                                       |
+| **US7: REST Testing**                    | ✅ Tests for basic CRUD working, but JWT-protected routes still need token handling.                                 |
+| **US8: Security (JWT + Roles)**          | 🟡 Login endpoint + JWT roles implemented. Works manually, tests pending.                                           |
 
+---
+
+## Guiding Grade Criteria Progress Overview
+| Dimension                       | Points (Max) | Implementation & Progress                                |
+|---------------------------------|--------------|----------------------------------------------------------|
+| **REST Design and correctness** | 20           | ✅ Endpoints, controller, status codes, DTO shapes.       |
+| **DATA MODEL & JPA MAPPING**    | 20           | ✅ Relations, cascading, constraints.                     |
+| **SKILL-STATS API INTEGRATION** | 15           | ❌ Correct call, enrichment logic, inclusion in responses. |
+| **SECURITY (JWT + ROLES)**      | 10           | ❌ add roles to endpoints, adjust REST Assured test to JWT. |
+| **TESTING**                     | 20           | ✅ Coverage of success & failures paths, isolations.      |
+| **ERROR HANDLING & VALIDATION** | 10           | ✅ Consistent JSON errors, fields errors.                  |
+| **CODE QUALITY & READ-ME**      | 5            | ✅ Structure, clarity and how to run.                     |
 ---
 
 ### Total Progress Summary
 
-| Category | Progress                       |
-|-----------|--------------------------------|
-| Fully Completed | ✅ US1, US2, US3, US4, US5, US6 |
-| Partially Completed | 🟡 US7, US8                    |
-| Not Started | ❌ None                         |
+| Category | Progress                  |
+|-----------|---------------------------|
+| Fully Completed | ✅ US1, US2, US3, US4, US7 |
+| Partially Completed | 🟡 US5, US6, US8          |
+| Not Started | ❌ None                    |
