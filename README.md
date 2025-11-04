@@ -45,3 +45,25 @@ docker rmi <image_id>
 docker stop <container_id>
 docker rm <container_id>
 ```
+## User Story Progress Overview
+
+| User Story | Points (Max) | Implementation & Progress                                                                                      |
+|-------------|--------------|----------------------------------------------------------------------------------------------------------------|
+| **US1: Database Configuration** | 10 | ✅ Implemented HibernateConfig, Trip & Guide entities, Populator with sample data. Fully functional and tested. |
+| **US2: DAOs and DTOs** | 10 | ✅ DAO layer complete using generics and DTO mapping. CRUD works with database.                                 |
+| **US3: REST API Endpoints** | 15 | ✅ All routes implemented (GET, POST, PUT, DELETE, addGuideToTrip). Tested manually via `dev.http`.             |
+| **US4: Filter by Category** | 10 | ✅ Implemented category filtering using Streams and JPA query. Returns trips by category.                       |
+| **US5: Total Trip Value per Guide** | 10 |✅ Calculating the sum of each, and show it in JSON.                                                              |
+| **US6: External Packing API Integration** | 15 | ✅ Working integration with external Packing API. ZonedDateTime handled via `JavaTimeModule`.                   |
+| **US7: REST Testing** | 20 | 🟡 Started – tests for basic CRUD working, but JWT-protected routes still need token handling.                 |
+| **US8: Security (JWT + Roles)** | 10 | 🟡 Login endpoint + JWT roles implemented. Works manually, tests pending.                                      |
+
+---
+
+### Total Progress Summary
+
+| Category | Progress                       |
+|-----------|--------------------------------|
+| Fully Completed | ✅ US1, US2, US3, US4, US5, US6 |
+| Partially Completed | 🟡 US7, US8                    |
+| Not Started | ❌ None                         |

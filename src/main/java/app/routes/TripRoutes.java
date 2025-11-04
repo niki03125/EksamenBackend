@@ -20,7 +20,6 @@ public class TripRoutes {
     public TripRoutes(){
         ObjectMapper mapper = new Utils().getObjectMapper();
         this.tripController = new TripController(HibernateConfig.getEntityManagerFactory(),mapper);
-
     }
 
     public EndpointGroup getTripRoutes() {

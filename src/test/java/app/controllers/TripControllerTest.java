@@ -21,17 +21,29 @@ import static org.junit.jupiter.api.Assertions.*;
 class TripControllerTest {
 
     private static Javalin app;
-    private static final EntityManagerFactory emf = HibernateConfig.getEntityManagerFactoryForTest();
+    private static EntityManagerFactory emf;
 
     @BeforeAll
     static void setUpAll(){
+        HibernateConfig.setTest(true);
+        emf = HibernateConfig.getEntityManagerFactory();
         app = ApplicationConfig.startServer(7008);
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 7008;
+        RestAssured.basePath = "/api/v1";
     }
 
     @BeforeEach
     void setUp() {
         try(EntityManager em = emf.createEntityManager()){
             em.getTransaction().begin();
+
+            em.createQuery("DELETE FROM Trip").executeUpdate();
+            em.createQuery("DELETE FROM Guide").executeUpdate();
+
+            // Nulstil sekvenser så næste insert får id=1
+            em.createNativeQuery("ALTER SEQUENCE guide_id_seq RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER SEQUENCE trips_id_seq RESTART WITH 1").executeUpdate();
 
             List<Trip> sansaTrips = Populate.createSansaTrips();
             List<Trip> tyrionTrips = Populate.createTyrionTrips();
@@ -57,21 +69,18 @@ class TripControllerTest {
 
             em.persist(sansa);
             em.persist(tyrion);
-            for (Trip t : sansaTrips) em.persist(t);
-            for (Trip t : tyrionTrips) em.persist(t);
+            sansaTrips.forEach(em::persist);
+            tyrionTrips.forEach(em::persist);
             em.getTransaction().commit();
         } catch (Exception e){
             e.printStackTrace();
         }
-        RestAssured.baseURI = "http://localhost:7008/api/v1";
     }
 
     @AfterEach
     void tearDown() {
         try(EntityManager em = emf.createEntityManager()){
             em.getTransaction().begin();
-            em.createQuery("DELETE FROM Trip").executeUpdate();
-            em.createQuery("DELETE FROM Guide").executeUpdate();
             em.getTransaction().commit();
         }catch (Exception e){
             e.printStackTrace();
@@ -81,6 +90,7 @@ class TripControllerTest {
     @AfterAll
     static void tearDownAll(){
         ApplicationConfig.stopServer(app);
+        if (emf != null) emf.close();
     }
 
     @Test
@@ -93,11 +103,11 @@ class TripControllerTest {
     void getById() {
         given()
                 .when()
-               // .get("/trips/1")
-                .then();
-               // .statusCode(200)
-               // .body("id",equalTo(1))
-               // .body("name", is("Forest trip in the North"));
+                .get("/trips/1")
+                .then()//;
+                .statusCode(200)
+                .body("id",equalTo(1))
+                .body("name", is("Forest trip in the North"));
         //In order to verify: outcommented. Does not pass when all is run, but pass when run on its own
     }
 
@@ -129,9 +139,9 @@ class TripControllerTest {
     void delete() {
         given()
                 .when()
-                //.delete("/trips/1")
-                .then();
-                //.statusCode(204);
+                .delete("/trips/1")
+                .then()//;
+                .statusCode(204);
     }
 
     @Test
