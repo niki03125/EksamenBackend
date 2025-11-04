@@ -13,38 +13,30 @@ POST http://localhost:7007/api/v1/candidates
 Content-Type: application/json
 
 {
-  "name": "New Lake trip",
-  "startTime": [2025, 11, 6, 12, 36, 31, 664879000],
-  "endTime": [2025, 11, 17, 12, 36, 31, 664879000],
-  "latitude": 57.3974,
-  "longitude": -5.2345,
-  "price": 3099,
-  "category": "lake",
-  "guideId": 1
-
+  "name": "Arya Stark",
+  "phone": "11223344",
+  "educationBackground": "Apprenticeship"
 }
 
-###Update trip by ID
-PUT http://localhost:7007/api/v1/candidates/5
+
+###Update candidate by ID
+PUT http://localhost:7007/api/v1/candidates/57
 Content-Type: application/json
 
 {
-  "id": 5,
-  "name": "New Lake trip",
-  "startTime": [2025, 11, 6, 12, 36, 31, 664879000],
-  "endTime": [2025, 11, 17, 12, 36, 31, 664879000],
-  "latitude": 57.3974,
-  "longitude": -5.2345,
-  "price": 3099,
-  "category": "lake",
-  "guideId": 2
+  "name": "Arya new strak",
+  "phone": "11223344",
+  "educationBackground": "Apprenticeship"
 }
 
 ### DElete candidates by ID
-DELETE http://localhost:7007/api/v1/candidates/5
+DELETE http://localhost:7007/api/v1/candidates/57
 
-### PUT chanche guide for trip
-PUT http://localhost:7007/api/v1/candidates/1/skills/1
 
-### GET Total price per guide
-GET http://localhost:7007/api/v1/candidates/guides/totalprice
+### (Valgfrit) GET candidates filtreret på skill category (US-4)
+# Gyldige værdier: PROG_LANG, DB, DEVOPS, FRONTEND, TESTING, DATA, FRAMEWORK
+GET http://localhost:7007/api/v1/candidates?category=PROG_LANG
+
+### PUT link a skill to at candidate
+PUT http://localhost:7007/api/v1/candidates/56/skills/55
+

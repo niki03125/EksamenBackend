@@ -35,6 +35,8 @@ public class Skill {
     @ManyToMany(mappedBy = "skills", fetch = FetchType.EAGER)
     private Set<Candidate> candidates = new HashSet<>();
 
+    private String slug;
+
     public Skill(String name, SkillCategory category, Set<Candidate> candidates, String description) {
         this.name = name;
         this.category = category;
