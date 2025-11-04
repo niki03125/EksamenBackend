@@ -94,7 +94,7 @@ public class Populate {
 
     // Hjælpemetode: hold begge sider af ManyToMany i sync
     private static void link(Candidate candidate, Skill skill) {
-        candidate.getSkills().add(skill);
+        candidate.addSkill(skill);
         skill.getCandidates().add(candidate);
     }
 }

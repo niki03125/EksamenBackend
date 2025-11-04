@@ -32,7 +32,7 @@ public class Skill {
     @Column(columnDefinition = "text")
     private String description;
 
-    @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "skills", fetch = FetchType.EAGER)
     private Set<Candidate> candidates = new HashSet<>();
 
     public Skill(String name, SkillCategory category, Set<Candidate> candidates, String description) {

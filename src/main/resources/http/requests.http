@@ -5,11 +5,11 @@
 
 GET http://localhost:7007/api/v1/
 
-### GET all trips
-GET http://localhost:7007/api/v1/trips
+### GET all candidates
+GET http://localhost:7007/api/v1/candidates
 
-### Create new trip
-POST http://localhost:7007/api/v1/trips
+### Create new candidates
+POST http://localhost:7007/api/v1/candidates
 Content-Type: application/json
 
 {
@@ -24,8 +24,8 @@ Content-Type: application/json
 
 }
 
-#\#Update trip by ID
-PUT http://localhost:7007/api/v1/trips/5
+###Update trip by ID
+PUT http://localhost:7007/api/v1/candidates/5
 Content-Type: application/json
 
 {
@@ -40,11 +40,11 @@ Content-Type: application/json
   "guideId": 2
 }
 
-### DElete trip by ID
-DELETE http://localhost:7007/api/v1/trips/5
+### DElete candidates by ID
+DELETE http://localhost:7007/api/v1/candidates/5
 
 ### PUT chanche guide for trip
-PUT http://localhost:7007/api/v1/trips/1/guides/1
+PUT http://localhost:7007/api/v1/candidates/1/skills/1
 
 ### GET Total price per guide
-GET http://localhost:7007/api/v1/trips/guides/totalprice
+GET http://localhost:7007/api/v1/candidates/guides/totalprice

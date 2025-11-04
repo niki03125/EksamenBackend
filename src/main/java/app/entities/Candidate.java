@@ -41,14 +41,10 @@ public class Candidate {
     }
 
     public void addSkill(Skill skill){
-        skills.add(skill);
-        skill.setCandidate(this);
+        if(skill != null){
+            skills.add(skill);
+            skill.getCandidates().add(this);
+        }
     }
-
-    public void removeTrip(Skill skill){
-        skills.remove(skill);
-        if (skill.getCandidate() == this) skill.setCandidate(null);
-    }
-
 
 }

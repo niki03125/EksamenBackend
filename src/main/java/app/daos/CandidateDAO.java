@@ -3,6 +3,7 @@ package app.daos;
 import app.dtos.CandidateDTO;
 import app.entities.Candidate;
 import app.entities.Skill;
+import app.enums.SkillCategory;
 import app.exceptions.ApiException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -118,8 +119,8 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
                 return null;
             }
 
-            candidate.getSkills().add(skill);
-            skill.getCandidates().add(candidate);
+            candidate.addSkill(skill);
+            em.merge(candidate);
 
             em.getTransaction().commit();
         }catch (Exception e){
@@ -169,6 +170,25 @@ public class CandidateDAO implements IDAO<CandidateDTO, Integer> {
             query.setParameter("id", candidateId);
             Candidate reloaded = query.getResultStream().findFirst().orElse(null);
             return  reloaded != null ? CandidateDTO.toDTO(reloaded) : null;
+        }
+    }
+
+    public List<CandidateDTO> getByCategory(SkillCategory category){
+        try(EntityManager em = emf.createEntityManager()){
+            var query = em.createQuery(
+                    "SELECT DISTINCT c FROM Candidate c " +
+                            "Left JOIN FETCH c.skills s " +
+                            "WHERE s.category = :category",
+                    Candidate.class
+            );
+            query.setParameter("category", category);
+
+            return query.getResultList()
+                    .stream()
+                    .map(CandidateDTO::toDTO)
+                    .toList();
+        }catch (Exception e){
+            throw new ApiException(500, "Error finden candidates by category" + category);
         }
     }
 
