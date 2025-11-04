@@ -1,7 +1,7 @@
 package app.controllers;
 
-import app.daos.GuideDAO;
-import app.dtos.GuideDTO;
+import app.daos.CandidateDAO;
+import app.dtos.CandidateDTO;
 import app.entities.Candidate;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
@@ -10,10 +10,10 @@ import java.util.List;
 
 public class GuideController implements IController<Candidate, Integer> {
 
-    private final GuideDAO guideDAO;
+    private final CandidateDAO guideDAO;
 
     public GuideController(EntityManagerFactory emf) {
-        this.guideDAO = GuideDAO.getInstance(emf);
+        this.guideDAO = CandidateDAO.getInstance(emf);
     }
 
     // GET /api/guides/:id
@@ -23,7 +23,7 @@ public class GuideController implements IController<Candidate, Integer> {
                 .check(this::validatePrimaryKey, "Invalid id")
                 .get();
 
-        GuideDTO dto = guideDAO.getById(id);         // DAO -> DTO
+        CandidateDTO dto = guideDAO.getById(id);         // DAO -> DTO
         if (dto == null) {
             ctx.status(404).result("Guide not found");
             return;
@@ -35,7 +35,7 @@ public class GuideController implements IController<Candidate, Integer> {
     // GET /api/guides
     @Override
     public void getAll(Context ctx) {
-        List<GuideDTO> dtos = guideDAO.getAll();     // DAO -> DTO
+        List<CandidateDTO> dtos = guideDAO.getAll();     // DAO -> DTO
         List<Candidate> candidates = dtos.stream()
                 .map(Candidate::toEntity)               // DTO -> Entity
                 .toList();
@@ -46,8 +46,8 @@ public class GuideController implements IController<Candidate, Integer> {
     @Override
     public void create(Context ctx) {
         Candidate incoming = validateEntity(ctx);        // Request -> Entity
-        GuideDTO toCreate = incoming.toDTO();        // Entity -> DTO
-        GuideDTO createdDto = guideDAO.create(toCreate);
+        CandidateDTO toCreate = incoming.toDTO();        // Entity -> DTO
+        CandidateDTO createdDto = guideDAO.create(toCreate);
         Candidate created = Candidate.toEntity(createdDto);  // DTO -> Entity (til response)
         ctx.status(201).json(created);
     }
@@ -59,17 +59,17 @@ public class GuideController implements IController<Candidate, Integer> {
                 .check(this::validatePrimaryKey, "Invalid id")
                 .get();
 
-        GuideDTO existing = guideDAO.getById(id);    // tjek findes
+        CandidateDTO existing = guideDAO.getById(id);    // tjek findes
         if (existing == null) {
             ctx.status(404).result("Guide not found");
             return;
         }
 
         Candidate data = validateEntity(ctx);            // Request -> Entity
-        GuideDTO toUpdate = data.toDTO();            // Entity -> DTO
+        CandidateDTO toUpdate = data.toDTO();            // Entity -> DTO
         toUpdate.setId(id);                          // brug path-id
 
-        GuideDTO updatedDto = guideDAO.update(toUpdate);
+        CandidateDTO updatedDto = guideDAO.update(toUpdate);
         Candidate updated = Candidate.toEntity(updatedDto);  // DTO -> Entity (til response)
         ctx.status(200).json(updated);
     }

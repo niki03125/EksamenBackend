@@ -1,14 +1,11 @@
 package app.entities;
 
-import app.dtos.TripDTO;
+import app.dtos.SkillDTO;
 import app.enums.SkillCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,50 +35,11 @@ public class Skill {
     @ManyToMany(mappedBy = "skills", fetch = FetchType.LAZY)
     private Set<Candidate> candidates = new HashSet<>();
 
-    public Skill(String name, SkillCategory category, Set<Candidate> candidates) {
+    public Skill(String name, SkillCategory category, Set<Candidate> candidates, String description) {
         this.name = name;
         this.category = category;
         this.candidates = candidates;
+        this.description = description;
     }
 
-    public SkillDTO toDTO() {
-        return SkillDTO.builder()
-                .id(this.id)
-                .name(this.name)
-                .category(this.category)
-                .description(this.description)
-                .build();
-    }
-
-    //ENTITY -> DTO
-    public static Skill toEntity(SkillDTO dto) {
-        if (dto == null) return null;
-
-        Skill skill = new Skill();
-        if (dto.getId() != null) skill.setId(dto.getId());
-        skill.setName(dto.getName());
-        skill.setCategory(dto.getCategory());
-        skill.setDescription(dto.getDescription());
-        return skill;
-    }
-
-    // DTO -> ENTITY
-    public static Skill toEntity(TripDTO dto, Candidate candidate) {
-        if (dto == null) return null;
-
-        Skill skill = new Skill();
-        if (dto.getId() != null) {
-            skill.setId(dto.getId());
-        }
-        skill.setName(dto.getName());
-        skill.setStartTime(dto.getStartTime());
-        skill.setEndTime(dto.getEndTime());
-        skill.setLatitude(dto.getLatitude() != null ? dto.getLatitude() : 0.0);
-        skill.setLongitude(dto.getLongitude() != null ? dto.getLongitude() : 0.0);
-        skill.setPrice(dto.getPrice());
-        skill.setCategory(dto.getCategory());
-        skill.setCandidate(candidate);
-
-        return skill;
-    }
 }

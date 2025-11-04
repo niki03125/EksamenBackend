@@ -1,13 +1,10 @@
 package app.entities;
 
-import app.dtos.GuideDTO;
+import app.dtos.CandidateDTO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.sql.results.graph.Fetch;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -52,31 +49,6 @@ public class Candidate {
         skills.remove(skill);
         if (skill.getCandidate() == this) skill.setCandidate(null);
     }
-    // ---- ENTITY -> DTO ----
-    public CandidateDTO toDTO() {
-        return CandidateDTO.builder()
-                .id(this.id)
-                .name(this.name)
-                .phone(this.phone)
-                .educationBackground(this.educationBackground)
-                .skillNames(this.skills.stream()
-                        .map(Skill::getName)
-                        .collect(Collectors.toSet()))
-                .build();
-    }
 
-    // ---- DTO -> ENTITY ----
-    public static Candidate toEntity(CandidateDTO dto) {
-        if (dto == null) return null;
-
-        Candidate candidate = new Candidate();
-        if (dto.getId() != null) candidate.setId(dto.getId());
-        candidate.setName(dto.getName());
-        candidate.setPhone(dto.getPhone());
-        candidate.setEducationBackground(dto.getEducationBackground());
-
-        // Skills tilføjes separat i controller eller populator (for at undgå null-pointer)
-        return candidate;
-    }
 
 }

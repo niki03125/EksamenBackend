@@ -1,7 +1,7 @@
 package app.controllers;
 
-import app.daos.TripDAO;
-import app.dtos.TripDTO;
+import app.daos.SkillDAO;
+import app.dtos.SkillDTO;
 import app.dtos.fetching.PackingResponseDTO;
 import app.entities.Skill;
 import app.enums.SkillCategory;
@@ -16,7 +16,7 @@ import java.net.http.HttpResponse;
 
 public class TripController implements IController<Skill, Integer> {
 
-    private final TripDAO tripDAO; // DAO arbejder med TripDTO
+    private final SkillDAO skillDAO; // DAO arbejder med TripDTO
 
     // til US6, bruges til hent og læs data fra extern API
     private static final HttpClient HTTP = HttpClient.newHttpClient();
@@ -24,7 +24,7 @@ public class TripController implements IController<Skill, Integer> {
     private static final String PACKING_BASE = "https://packingapi.cphbusinessapps.dk/packinglist/";
 
     public TripController(EntityManagerFactory emf,ObjectMapper OM) {
-        this.tripDAO = TripDAO.getInstance(emf);
+        this.skillDAO = SkillDAO.getInstance(emf);
         this.OM =OM;
     }
 
@@ -35,7 +35,7 @@ public class TripController implements IController<Skill, Integer> {
 
         //hvis ingen kategori er angivet -> hent alle trips
         if(categoryParameter == null){
-            ctx.json(tripDAO.getAll());
+            ctx.json(skillDAO.getAll());
             return;
         }
 
@@ -52,7 +52,7 @@ public class TripController implements IController<Skill, Integer> {
             ctx.status(400).result("invalid category");
             return;
         }
-        ctx.json(tripDAO.getbyCategory(category));
+        ctx.json(skillDAO.getbyCategory(category));
     }
 
     // US6 henter også packingItems
@@ -64,7 +64,7 @@ public class TripController implements IController<Skill, Integer> {
                 .get();
 
         // hent trip fra DAO
-        TripDTO dto = tripDAO.getById(id);
+        SkillDTO dto = skillDAO.getById(id);
         if (dto == null) {
             ctx.status(404).result("Trip not found");
             return;
@@ -84,20 +84,20 @@ public class TripController implements IController<Skill, Integer> {
 
     // POST /api/trips
     public void create(Context ctx) {
-        var incoming = ctx.bodyAsClass(TripDTO.class);
-        var created = tripDAO.create(incoming);
+        var incoming = ctx.bodyAsClass(SkillDTO.class);
+        var created = skillDAO.create(incoming);
         ctx.status(201).json(created); // TripDTO
     }
 
     // PUT /api/trips/:id
     public void update(Context ctx) {
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Invalid id").get();
-        var existing = tripDAO.getById(id);
+        var existing = skillDAO.getById(id);
         if (existing == null) { ctx.status(404).result("Trip not found"); return; }
 
-        var incoming = ctx.bodyAsClass(TripDTO.class);
+        var incoming = ctx.bodyAsClass(SkillDTO.class);
         incoming.setId(id);
-        var updated = tripDAO.update(incoming);
+        var updated = skillDAO.update(incoming);
         ctx.status(200).json(updated); // TripDTO
     }
 
@@ -108,7 +108,7 @@ public class TripController implements IController<Skill, Integer> {
                 .check(this::validatePrimaryKey, "Invalid id")
                 .get();
 
-        boolean deleted = tripDAO.delete(id);
+        boolean deleted = skillDAO.delete(id);
         ctx.status(deleted ? 204 : 404);
     }
 
@@ -121,7 +121,7 @@ public class TripController implements IController<Skill, Integer> {
                 .check(this::validatePrimaryKey, "Invalid guideId").get();
 
         //Find trip + guide i dao, link dem og retuner TripDTO
-        var updated = tripDAO.linkGuide(tripId,guideId);
+        var updated = skillDAO.linkGuide(tripId,guideId);
 
         if(updated == null){
             ctx.status(404).result("trip og guide not found");
@@ -132,7 +132,7 @@ public class TripController implements IController<Skill, Integer> {
 
     //US5: GET /api/v1/trips/guides/totalprice
     public void getTotalPricePerGuide(Context ctx){
-        ctx.status(200).json(tripDAO.getTotalPricePerGuide());
+        ctx.status(200).json(skillDAO.getTotalPricePerGuide());
     }
 
     // TODO US6
@@ -142,7 +142,7 @@ public class TripController implements IController<Skill, Integer> {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
 
         // hent trip fra DAO
-        TripDTO dto = tripDAO.getById(id);
+        SkillDTO dto = skillDAO.getById(id);
         if (dto == null) {
             ctx.status(404).result("trip not found");
             return;
