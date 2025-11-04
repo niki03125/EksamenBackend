@@ -1,8 +1,8 @@
 package app.config;
 
-import app.entities.Guide;
-import app.entities.Trip;
-import app.enums.TripCategory;
+import app.entities.Candidate;
+import app.entities.Skill;
+import app.enums.SkillCategory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -17,97 +17,84 @@ public class Populate {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
 
-        try{
+        try {
             em.getTransaction().begin();
 
-            //opretter trips
-            List<Trip> sansaTrips = createSansaTrips();
-            List<Trip> tyrionTrips = createTyrionTrips();
+            // ---------- Opret fælles skills ----------
+            Skill java     = new Skill();
+            java.setName("Java");
+            java.setCategory(SkillCategory.PROG_LANG);
+            java.setDescription("General-purpose JVM language");
+            em.persist(java);
 
-            // opretter guides
-            Guide sansa = new Guide();
+            Skill python   = new Skill();
+            python.setName("Python");
+            python.setCategory(SkillCategory.PROG_LANG);
+            python.setDescription("Scripting, data & automation");
+            em.persist(python);
+
+            Skill postgres = new Skill();
+            postgres.setName("PostgreSQL");
+            postgres.setCategory(SkillCategory.DB);
+            postgres.setDescription("Relational database");
+            em.persist(postgres);
+
+            Skill docker   = new Skill();
+            docker.setName("Docker");
+            docker.setCategory(SkillCategory.DEVOPS);
+            docker.setDescription("Containerization");
+            em.persist(docker);
+
+            Skill react    = new Skill();
+            react.setName("React");
+            react.setCategory(SkillCategory.FRONTEND);
+            react.setDescription("UI library");
+            em.persist(react);
+
+            Skill RESTAssuredTest  = new Skill();
+            RESTAssuredTest.setName("RestAssuredTest");
+            RESTAssuredTest.setCategory(SkillCategory.TESTING);
+            RESTAssuredTest.setDescription("Endpoint testing");
+            em.persist(RESTAssuredTest);
+
+            // ---------- Opret kandidater ----------
+            Candidate sansa = new Candidate();
             sansa.setName("Sansa Stark");
-            sansa.setEmail("sansa.stark@winterfell.com");
             sansa.setPhone("12345678");
-            sansa.setExperienceYears(4);
-            sansa.setTrips(sansaTrips);
+            sansa.setEducationBackground("BSc Computer Science");
 
-            Guide tyrion = new Guide();
+            Candidate tyrion = new Candidate();
             tyrion.setName("Tyrion Lannister");
-            tyrion.setEmail("tyrion@casterlyrock.com");
             tyrion.setPhone("87654321");
-            tyrion.setExperienceYears(10);
-            tyrion.setTrips(tyrionTrips);
+            tyrion.setEducationBackground("MSc Software Engineering");
 
-            //knytter trips til deres guide
-            for (Trip trip: sansaTrips){
-                trip.setGuide(sansa);
-            }
-            for(Trip trip: tyrionTrips){
-                trip.setGuide(tyrion);
-            }
+            // ---------- Knyt relationer (begge sider) ----------
+            link(sansa, java);
+            link(sansa, postgres);
+            link(sansa, docker);
 
-            //tilføjer trips til guide, bi directional
-            sansa.setTrips(sansaTrips);
-            tyrion.setTrips(tyrionTrips);
+            link(tyrion, python);
+            link(tyrion, react);
+            link(tyrion, RESTAssuredTest);
 
-            //gem data i db
+            // ---------- Persist kandidater ----------
             em.persist(sansa);
             em.persist(tyrion);
 
             em.getTransaction().commit();
-            System.out.println("populate compleated, with trips and guides");
-        } catch (Exception e){
+            System.out.println("Populate completed: candidates + skills + join-relations oprettet.");
+        } catch (Exception e) {
             em.getTransaction().rollback();
             e.printStackTrace();
-        }finally {
+        } finally {
             em.close();
             emf.close();
         }
     }
 
-    public static List<Trip> createSansaTrips(){
-        List<Trip> trips = new ArrayList<>();
-        trips.add(new Trip(
-                "Forest trip in the North",
-                LocalDateTime.now().plusDays(3), // +3 dage fra nu
-                LocalDateTime.now().plusDays(5),
-                54.3210, -1.2345,
-                new BigDecimal("1599.00"),
-                TripCategory.forest
-        ));
-
-        trips.add(new Trip(
-                "Winter City Lights Tour",
-                LocalDateTime.now().plusDays(10), // +3 dage fra nu
-                LocalDateTime.now().plusDays(12),
-                55.6759, 12.5655, //københavn
-                new BigDecimal("999.00"),
-                TripCategory.city
-        ));
-        return trips;
+    // Hjælpemetode: hold begge sider af ManyToMany i sync
+    private static void link(Candidate candidate, Skill skill) {
+        candidate.getSkills().add(skill);
+        skill.getCandidates().add(candidate);
     }
-
-    public static List<Trip> createTyrionTrips(){
-        List<Trip> trips = new ArrayList<>();
-        trips.add(new Trip(
-                "Wine & Sea Cruise",
-                LocalDateTime.now().plusDays(20), // +3 dage fra nu
-                LocalDateTime.now().plusDays(25),
-                36.7213, -4.4214,
-                new BigDecimal("2999.00"),
-                TripCategory.sea
-        ));
-
-        trips.add(new Trip(
-                "Snowy Escape from the City",
-                LocalDateTime.now().plusDays(30), // +3 dage fra nu
-                LocalDateTime.now().plusDays(35),
-                68.9707, 23.7603,
-                new BigDecimal("3499.00"),
-                TripCategory.snow
-        ));
-        return trips;
-    }
-
 }

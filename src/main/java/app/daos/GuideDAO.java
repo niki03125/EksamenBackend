@@ -1,7 +1,7 @@
 package app.daos;
 
 import app.dtos.GuideDTO;
-import app.entities.Guide;
+import app.entities.Candidate;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -28,7 +28,7 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
     public GuideDTO create(GuideDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Guide entity = dto.toEntity();   // DTO → Entity
+            Candidate entity = dto.toEntity();   // DTO → Entity
             em.persist(entity);
             em.getTransaction().commit();
             return entity.toDTO();           // Entity → DTO
@@ -38,10 +38,10 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
     @Override
     public List<GuideDTO> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Guide> q = em.createQuery("SELECT g FROM Guide g", Guide.class);
+            TypedQuery<Candidate> q = em.createQuery("SELECT g FROM Candidate g", Candidate.class);
             return q.getResultList()
                     .stream()
-                    .map(Guide::toDTO)
+                    .map(Candidate::toDTO)
                     .toList();
         }
     }
@@ -49,8 +49,8 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
     @Override
     public GuideDTO getById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Guide guide = em.find(Guide.class, id);
-            return guide != null ? guide.toDTO() : null;
+            Candidate candidate = em.find(Candidate.class, id);
+            return candidate != null ? candidate.toDTO() : null;
         }
     }
 
@@ -59,7 +59,7 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
-            Guide existing = em.find(Guide.class, dto.getId());
+            Candidate existing = em.find(Candidate.class, dto.getId());
             if (existing == null) {
                 em.getTransaction().rollback();
                 return null;
@@ -70,7 +70,7 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
             existing.setPhone(dto.getPhone());
             existing.setExperienceYears(dto.getExperienceYears());
 
-            Guide merged = em.merge(existing);
+            Candidate merged = em.merge(existing);
             em.getTransaction().commit();
             return merged.toDTO();
         }
@@ -79,10 +79,10 @@ public class GuideDAO implements IDAO<GuideDTO, Integer> {
     @Override
     public boolean delete(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Guide guide = em.find(Guide.class, id);
-            if (guide == null) return false;
+            Candidate candidate = em.find(Candidate.class, id);
+            if (candidate == null) return false;
             em.getTransaction().begin();
-            em.remove(guide);
+            em.remove(candidate);
             em.getTransaction().commit();
             return true;
         }

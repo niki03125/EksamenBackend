@@ -1,16 +1,14 @@
 package app.dtos;
 
 import app.dtos.fetching.PackingItemDTO;
-import app.entities.Guide;
-import app.entities.Trip;
-import app.enums.TripCategory;
+import app.entities.Candidate;
+import app.entities.Skill;
+import app.enums.SkillCategory;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,7 +25,7 @@ public class TripDTO {
     private Double latitude;
     private Double longitude;
     private BigDecimal price;
-    private TripCategory category;
+    private SkillCategory category;
 
     //TODO:US6 fyldes ved GET /trips/{id}
     private List<PackingItemDTO> packingItems;
@@ -37,8 +35,8 @@ public class TripDTO {
     private String guideName;
 
     // ---- DTO -> ENTITY ----
-    public Trip toEntity(Guide guide) {
-        Trip t = new Trip();
+    public Skill toEntity(Candidate candidate) {
+        Skill t = new Skill();
         if (this.id != null) t.setId(this.id);
         t.setName(this.name);
         t.setStartTime(this.startTime);
@@ -47,24 +45,24 @@ public class TripDTO {
         t.setLongitude(this.longitude != null ? this.longitude : 0.0);
         t.setPrice(this.price);
         t.setCategory(this.category);
-        t.setGuide(guide);
+        t.setCandidate(candidate);
         return t;
     }
 
     // ---- ENTITY -> DTO (helper, hvis du ikke vil kalde trip.toDTO()) ----
-    public static TripDTO toDTO(Trip trip) {
-        if (trip == null) return null;
+    public static TripDTO toDTO(Skill skill) {
+        if (skill == null) return null;
         return TripDTO.builder()
-                .id(trip.getId())
-                .name(trip.getName())
-                .startTime(trip.getStartTime())
-                .endTime(trip.getEndTime())
-                .latitude(trip.getLatitude())
-                .longitude(trip.getLongitude())
-                .price(trip.getPrice())
-                .category(trip.getCategory())
-                .guideId(trip.getGuide() != null ? trip.getGuide().getId() : null)
-                .guideName(trip.getGuide() != null ? trip.getGuide().getName() : null)
+                .id(skill.getId())
+                .name(skill.getName())
+                .startTime(skill.getStartTime())
+                .endTime(skill.getEndTime())
+                .latitude(skill.getLatitude())
+                .longitude(skill.getLongitude())
+                .price(skill.getPrice())
+                .category(skill.getCategory())
+                .guideId(skill.getCandidate() != null ? skill.getCandidate().getId() : null)
+                .guideName(skill.getCandidate() != null ? skill.getCandidate().getName() : null)
                 .build();
     }
 }

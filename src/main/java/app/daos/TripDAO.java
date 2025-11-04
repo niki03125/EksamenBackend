@@ -1,9 +1,9 @@
 package app.daos;
 
 import app.dtos.TripDTO;
-import app.entities.Guide;
-import app.entities.Trip;
-import app.enums.TripCategory;
+import app.entities.Candidate;
+import app.entities.Skill;
+import app.enums.SkillCategory;
 import app.exceptions.ApiException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -34,8 +34,8 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
     public TripDTO create(TripDTO dto) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Guide guide = dto.getGuideId() != null ? em.getReference(Guide.class, dto.getGuideId()) : null;
-            Trip entity = dto.toEntity(guide);  // DTO → Entity
+            Candidate candidate = dto.getGuideId() != null ? em.getReference(Candidate.class, dto.getGuideId()) : null;
+            Skill entity = dto.toEntity(candidate);  // DTO → Entity
             em.persist(entity);
             em.getTransaction().commit();
             return TripDTO.toDTO(entity);              // Entity → DTO
@@ -47,9 +47,9 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
     @Override
     public List<TripDTO> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Trip> query = em.createQuery(
-                    "SELECT t FROM Trip t LEFT JOIN FETCH t.guide",
-                    Trip.class//left join for at undgå  lazy-problemer
+            TypedQuery<Skill> query = em.createQuery(
+                    "SELECT t FROM Skill t LEFT JOIN FETCH t.guide",
+                    Skill.class//left join for at undgå  lazy-problemer
             );
             return query.getResultList()
                     .stream()
@@ -63,12 +63,12 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
     @Override
     public TripDTO getById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Trip> query = em.createQuery(
-                    "SELECT t FROM Trip t LEFT JOIN FETCH t.guide WHERE t.id = :id", Trip.class
+            TypedQuery<Skill> query = em.createQuery(
+                    "SELECT t FROM Skill t LEFT JOIN FETCH t.guide WHERE t.id = :id", Skill.class
             );
             query.setParameter("id", id);
-            Trip trip = query.getResultStream().findFirst().orElse(null);
-            return trip != null ? TripDTO.toDTO(trip) : null;
+            Skill skill = query.getResultStream().findFirst().orElse(null);
+            return skill != null ? TripDTO.toDTO(skill) : null;
         }
     }
 
@@ -77,13 +77,13 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
-            Trip existing = em.find(Trip.class, dto.getId());
+            Skill existing = em.find(Skill.class, dto.getId());
             if (existing == null) {
                 em.getTransaction().rollback();
                 return null;
             }
 
-            Guide guide = dto.getGuideId() != null ? em.getReference(Guide.class, dto.getGuideId()) : null; //ternary if-statement
+            Candidate candidate = dto.getGuideId() != null ? em.getReference(Candidate.class, dto.getGuideId()) : null; //ternary if-statement
 
             existing.setName(dto.getName());
             existing.setStartTime(dto.getStartTime());
@@ -92,7 +92,7 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
             existing.setLongitude(dto.getLongitude());
             existing.setPrice(dto.getPrice());
             existing.setCategory(dto.getCategory());
-            existing.setGuide(guide);
+            existing.setCandidate(candidate);
 
             em.getTransaction().commit();
             return TripDTO.toDTO(existing);
@@ -104,10 +104,10 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
     @Override
     public boolean delete(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
-            Trip trip = em.find(Trip.class, id);
-            if (trip == null) return false;
+            Skill skill = em.find(Skill.class, id);
+            if (skill == null) return false;
             em.getTransaction().begin();
-            em.remove(trip);
+            em.remove(skill);
             em.getTransaction().commit();
             return true;
         }catch (Exception e){
@@ -116,13 +116,13 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
     }
 
     //til US4
-    public List<TripDTO> getbyCategory(TripCategory category){
+    public List<TripDTO> getbyCategory(SkillCategory category){
         try( EntityManager em = emf.createEntityManager()) {
             var query =em.createQuery(
-                    "SELECT t FROM Trip t " +
+                    "SELECT t FROM Skill t " +
                             "LEFT JOIN FETCH t.guide " +
                             "WHERE t.category = :category",
-                    Trip.class
+                    Skill.class
             );
             query.setParameter("category", category); // filtere på category-fletet i bd
 
@@ -138,7 +138,7 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
             try( EntityManager em = emf.createEntityManager()) {
                 var query = em.createQuery(
                         "SELECT g.id, g.name, COALESCE(SUM(t.price), 0) " + // vælg id, navn og sum af pris også dem der ikke har nogen sum, bliver sat til nu
-                                "FROM Guide g LEFT JOIN g.trips t " +          // venstre join: alle guides med/uden trips
+                                "FROM Candidate g LEFT JOIN g.trips t " +          // venstre join: alle guides med/uden trips
                                 "GROUP BY g.id, g.name " +                     // gruppering pr. guide
                                 "ORDER BY g.id",                               // sortér på id
                         Object[].class                                         // hver række returneres som Object[]
@@ -168,21 +168,21 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
             em.getTransaction().begin();
 
             //find trip
-            Trip trip = em.find(Trip.class, tripId);
-            if (trip == null) {
+            Skill skill = em.find(Skill.class, tripId);
+            if (skill == null) {
                 em.getTransaction().rollback();
                 return null;
             }
 
             //find guide
-            Guide guide = em.find(Guide.class, guideId);
-            if (guide == null) {
+            Candidate candidate = em.find(Candidate.class, guideId);
+            if (candidate == null) {
                 em.getTransaction().rollback();
                 return null;
             }
 
             //sæt relationer
-            trip.setGuide(guide);
+            skill.setCandidate(candidate);
             em.getTransaction().commit();
         }catch (Exception e){
             throw new ApiException(500, "Error finding trips or guides"); //man kan også catche dem i controller(controller kender konteksten, mens daoen fanger tekniske fejl i db)
@@ -190,13 +190,13 @@ public class TripDAO implements IDAO<TripDTO, Integer> {
             //reaload entiteten med Join Fetch så reallationerne er indlæst når vi mapper til dto, uden lasy-problemer
             try(EntityManager em = emf.createEntityManager()){
                 var query = em.createQuery(
-                        "SELECT t FROM Trip t "+
+                        "SELECT t FROM Skill t "+
                                 "LEFT JOIN FETCH t.guide " +
                                // "LEFT JOIN FETCH t.packingItems " +
-                                "WHERE t.id = :id", Trip.class
+                                "WHERE t.id = :id", Skill.class
                 );
                 query.setParameter("id", tripId);
-                Trip reloaded = query.getResultStream().findFirst().orElse(null);
+                Skill reloaded = query.getResultStream().findFirst().orElse(null);
                 return reloaded != null ? TripDTO.toDTO(reloaded) : null;
             }
     }

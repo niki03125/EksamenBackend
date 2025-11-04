@@ -2,13 +2,13 @@ package app.controllers;
 
 import app.daos.GuideDAO;
 import app.dtos.GuideDTO;
-import app.entities.Guide;
+import app.entities.Candidate;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 
-public class GuideController implements IController<Guide, Integer> {
+public class GuideController implements IController<Candidate, Integer> {
 
     private final GuideDAO guideDAO;
 
@@ -28,27 +28,27 @@ public class GuideController implements IController<Guide, Integer> {
             ctx.status(404).result("Guide not found");
             return;
         }
-        Guide guide = Guide.toEntity(dto);           // DTO -> Entity (til response)
-        ctx.status(200).json(guide);
+        Candidate candidate = Candidate.toEntity(dto);           // DTO -> Entity (til response)
+        ctx.status(200).json(candidate);
     }
 
     // GET /api/guides
     @Override
     public void getAll(Context ctx) {
         List<GuideDTO> dtos = guideDAO.getAll();     // DAO -> DTO
-        List<Guide> guides = dtos.stream()
-                .map(Guide::toEntity)               // DTO -> Entity
+        List<Candidate> candidates = dtos.stream()
+                .map(Candidate::toEntity)               // DTO -> Entity
                 .toList();
-        ctx.status(200).json(guides);
+        ctx.status(200).json(candidates);
     }
 
     // POST /api/guides
     @Override
     public void create(Context ctx) {
-        Guide incoming = validateEntity(ctx);        // Request -> Entity
+        Candidate incoming = validateEntity(ctx);        // Request -> Entity
         GuideDTO toCreate = incoming.toDTO();        // Entity -> DTO
         GuideDTO createdDto = guideDAO.create(toCreate);
-        Guide created = Guide.toEntity(createdDto);  // DTO -> Entity (til response)
+        Candidate created = Candidate.toEntity(createdDto);  // DTO -> Entity (til response)
         ctx.status(201).json(created);
     }
 
@@ -65,12 +65,12 @@ public class GuideController implements IController<Guide, Integer> {
             return;
         }
 
-        Guide data = validateEntity(ctx);            // Request -> Entity
+        Candidate data = validateEntity(ctx);            // Request -> Entity
         GuideDTO toUpdate = data.toDTO();            // Entity -> DTO
         toUpdate.setId(id);                          // brug path-id
 
         GuideDTO updatedDto = guideDAO.update(toUpdate);
-        Guide updated = Guide.toEntity(updatedDto);  // DTO -> Entity (til response)
+        Candidate updated = Candidate.toEntity(updatedDto);  // DTO -> Entity (til response)
         ctx.status(200).json(updated);
     }
 
@@ -91,8 +91,8 @@ public class GuideController implements IController<Guide, Integer> {
     }
 
     @Override
-    public Guide validateEntity(Context ctx) {
-        return ctx.bodyValidator(Guide.class)
+    public Candidate validateEntity(Context ctx) {
+        return ctx.bodyValidator(Candidate.class)
                 .check(g -> g.getName() != null && !g.getName().isBlank(), "Name is required")
                 .check(g -> g.getEmail() != null && !g.getEmail().isBlank(), "Email is required")
                 .check(g -> g.getPhone() != null && !g.getPhone().isBlank(), "Phone is required")

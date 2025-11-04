@@ -3,8 +3,8 @@ package app.controllers;
 import app.daos.TripDAO;
 import app.dtos.TripDTO;
 import app.dtos.fetching.PackingResponseDTO;
-import app.entities.Trip;
-import app.enums.TripCategory;
+import app.entities.Skill;
+import app.enums.SkillCategory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
@@ -14,7 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class TripController implements IController<Trip, Integer> {
+public class TripController implements IController<Skill, Integer> {
 
     private final TripDAO tripDAO; // DAO arbejder med TripDTO
 
@@ -39,8 +39,8 @@ public class TripController implements IController<Trip, Integer> {
             return;
         }
 
-        TripCategory category = null;
-        for(TripCategory tc : TripCategory.values()){
+        SkillCategory category = null;
+        for(SkillCategory tc : SkillCategory.values()){
             if(tc.name().equalsIgnoreCase(categoryParameter)){
                 category = tc;
                 break; //stopper løkken når du har fundet hva du skal bruge
@@ -210,8 +210,8 @@ public class TripController implements IController<Trip, Integer> {
         }
 
         @Override
-        public Trip validateEntity(Context ctx) {
-            return ctx.bodyValidator(Trip.class)
+        public Skill validateEntity(Context ctx) {
+            return ctx.bodyValidator(Skill.class)
                     .check(t -> t.getName() != null && !t.getName().isBlank(), "Name is required")
                     .check(t -> t.getPrice() != null, "Price is required")
                     .check(t -> t.getCategory() != null, "Category is required")

@@ -3,8 +3,8 @@ package app.controllers;
 import app.config.ApplicationConfig;
 import app.config.HibernateConfig;
 import app.config.Populate;
-import app.entities.Guide;
-import app.entities.Trip;
+import app.entities.Candidate;
+import app.entities.Skill;
 import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import jakarta.persistence.EntityManager;
@@ -16,9 +16,8 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
-class TripControllerTest {
+class SkillControllerTest {
 
     private static Javalin app;
     private static EntityManagerFactory emf;
@@ -38,39 +37,39 @@ class TripControllerTest {
         try(EntityManager em = emf.createEntityManager()){
             em.getTransaction().begin();
 
-            em.createQuery("DELETE FROM Trip").executeUpdate();
-            em.createQuery("DELETE FROM Guide").executeUpdate();
+            em.createQuery("DELETE FROM Skill").executeUpdate();
+            em.createQuery("DELETE FROM Candidate").executeUpdate();
 
             // Nulstil sekvenser så næste insert får id=1
             em.createNativeQuery("ALTER SEQUENCE guide_id_seq RESTART WITH 1").executeUpdate();
             em.createNativeQuery("ALTER SEQUENCE trips_id_seq RESTART WITH 1").executeUpdate();
 
-            List<Trip> sansaTrips = Populate.createSansaTrips();
-            List<Trip> tyrionTrips = Populate.createTyrionTrips();
+            List<Skill> sansaSkills = Populate.createSansaTrips();
+            List<Skill> tyrionSkills = Populate.createTyrionTrips();
 
             // opretter guides
-            Guide sansa = new Guide();
+            Candidate sansa = new Candidate();
             sansa.setName("Sansa Stark");
             sansa.setEmail("sansa.stark@winterfell.com");
             sansa.setPhone("12345678");
             sansa.setExperienceYears(4);
-            sansa.setTrips(sansaTrips);
+            sansa.setSkills(sansaSkills);
 
-            Guide tyrion = new Guide();
+            Candidate tyrion = new Candidate();
             tyrion.setName("Tyrion Lannister");
             tyrion.setEmail("tyrion@casterlyrock.com");
             tyrion.setPhone("87654321");
             tyrion.setExperienceYears(10);
-            tyrion.setTrips(tyrionTrips);
+            tyrion.setSkills(tyrionSkills);
 
             //bi-direktional
-            sansaTrips.forEach(t-> t.setGuide(sansa));
-            tyrionTrips.forEach(t -> t.setGuide(tyrion));
+            sansaSkills.forEach(t-> t.setCandidate(sansa));
+            tyrionSkills.forEach(t -> t.setCandidate(tyrion));
 
             em.persist(sansa);
             em.persist(tyrion);
-            sansaTrips.forEach(em::persist);
-            tyrionTrips.forEach(em::persist);
+            sansaSkills.forEach(em::persist);
+            tyrionSkills.forEach(em::persist);
             em.getTransaction().commit();
         } catch (Exception e){
             e.printStackTrace();
